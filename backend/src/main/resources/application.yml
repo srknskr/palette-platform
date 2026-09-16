@@ -16,15 +16,27 @@ spring:
   flyway:
     enabled: true
 
+jwt:
+  secret: ${JWT_SECRET:developmentSecretKeyMustBeAtLeast32BytesLongForHS256Security123456}
+  access-token-expiration-minutes: ${JWT_ACCESS_TOKEN_EXPIRATION_MINUTES:15}
+  refresh-token-expiration-days: ${JWT_REFRESH_TOKEN_EXPIRATION_DAYS:7}
+
 management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,metrics
   endpoint:
     health:
       probes:
         enabled: true
+      show-details: always
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
 
 server:
   port: ${PORT:8080}
