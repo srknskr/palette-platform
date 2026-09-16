@@ -11,28 +11,28 @@
 
 ## Milestone 2 — First vertical slice
 
-- [ ] Palette domain model
-- [ ] Create palette use case
-- [ ] List newest palettes with pagination
-- [ ] DTO validation for exactly four HEX colors
-- [ ] Unit, repository, API, and integration tests
-- [ ] OpenAPI documentation
+- [x] Palette domain model
+- [x] Create palette use case
+- [x] List newest palettes with pagination
+- [x] DTO validation for exactly four HEX colors
+- [x] Unit, repository, API, and integration tests
+- [x] OpenAPI documentation
 
 ## Milestone 3 — Identity and security
 
-- [ ] Registration and password hashing
-- [ ] Login and short-lived JWT access token
-- [ ] Refresh-token rotation and logout
-- [ ] Ownership authorization
-- [ ] Security regression tests
+- [x] Registration and password hashing
+- [x] Login and short-lived JWT access token
+- [x] Refresh-token rotation and logout
+- [x] Ownership authorization
+- [x] Security regression tests
 
 ## Milestone 4 — Discovery and collections
 
-- [ ] Popular and random feeds
-- [ ] Tags and color search
-- [ ] Favorite/unfavorite
-- [ ] Personal collection
-- [ ] Moderation workflow
+- [x] Popular and random feeds
+- [x] Tags and color search
+- [x] Favorite/unfavorite
+- [x] Personal collection
+- [x] Moderation workflow
 
 ## Milestone 5 — Mobile
 

@@ -26,13 +26,13 @@ feature/
 
 Dependency direction is inward: HTTP and persistence depend on application/domain contracts. Domain code does not depend on Spring MVC.
 
-## Initial modules
+## Implemented modules
 
-- `identity`: users, credentials, JWT access tokens, refresh-token rotation
-- `palette`: palettes, ordered colors, tags, publishing state
-- `favorite`: idempotent favorite operations and personal collections
-- `moderation`: administrative decisions and audit trail
-- `shared`: error contracts, clock/ID abstractions, pagination conventions
+- `identity`: users, credentials, JWT access tokens, opaque refresh-token rotation, SHA-256 database hashing
+- `palette`: palettes, 4 ordered colors, tags, draft/published/rejected/archived states, search and discovery
+- `favorite`: idempotent favorite and unfavorite operations, personal collections, atomic count management
+- `moderation`: administrative review queue (pending palettes), publish, reject, archive actions, audit trail
+- `shared`: RFC 9457 problem details, rate limiting, OpenAPI/Swagger configuration, pagination conventions
 
 ## Important decisions
 
@@ -44,9 +44,9 @@ One repository reduces coordination overhead and permits an API change to update
 
 The domain is too small to justify distributed transactions, network boundaries, or duplicated deployment infrastructure. Feature boundaries are retained so modules can be extracted later if evidence requires it.
 
-### PostgreSQL as the integration-test database
+### PostgreSQL as the primary database
 
-H2 is allowed only for a fast application-context smoke test. Repository behavior and migrations must be verified against PostgreSQL with Testcontainers.
+PostgreSQL is the production database. Flyway manages all migrations (`V1__baseline_schema.sql`, `V2__moderation_audit.sql`). Production uses `ddl-auto: validate`. Testcontainers PostgreSQL is used for integration testing.
 
 ### Native mobile UI with KMP sharing
 
@@ -58,6 +58,6 @@ Networking, serialization, domain models, and repositories can be shared. Androi
 - JSON uses camelCase
 - UUIDs are opaque strings to clients
 - Times use ISO-8601 UTC
-- Collection endpoints are paginated
-- Idempotency is preferred for favorite/unfavorite and logout operations
-- Errors use one consistent problem-details shape
+- Collection endpoints are paginated (`PagedResponse`)
+- Idempotency is enforced for favorite, unfavorite, and logout operations
+- Errors use RFC 9457 `ProblemDetail` responses
