@@ -9,3 +9,8 @@ spring:
       ddl-auto: validate
   flyway:
     enabled: true
+
+jwt:
+  secret: testSecretKeyMustBeAtLeast32BytesLongForHS256Security123456
+  access-token-expiration-minutes: 15
+  refresh-token-expiration-days: 7
