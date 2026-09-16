@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: palette
+      POSTGRES_USER: palette
+      POSTGRES_PASSWORD: palette
+    ports:
+      - "5432:5432"
+    volumes:
+      - palette_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U palette -d palette"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    profiles: ["full"]
+    build:
+      context: ../../backend
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/palette
+      DB_USERNAME: palette
+      DB_PASSWORD: palette
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  palette_postgres_data:

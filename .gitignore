@@ -1,0 +1,25 @@
+.DS_Store
+.idea/
+.vscode/
+*.iml
+
+# Gradle
+.gradle/
+**/build/
+
+# Node
+**/node_modules/
+**/dist/
+
+# Kotlin/Android
+local.properties
+**/.kotlin/
+
+# Xcode
+**/DerivedData/
+**/*.xcuserstate
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
