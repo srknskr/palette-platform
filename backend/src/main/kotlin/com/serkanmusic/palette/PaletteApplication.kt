@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class PaletteApplication
 
 fun main(args: Array<String>) {
-    runApplication<PaletteApplication>(*args)
+    runApplication<PaletteApplication>(args = args)
 }
