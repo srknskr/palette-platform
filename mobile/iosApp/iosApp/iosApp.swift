@@ -16,7 +16,12 @@ struct PaletteApp: App {
     let collectionViewModel: CollectionViewModel
 
     init() {
-        let config = ApiConfig(baseUrl: ApiConfig.companion.IOS_SIMULATOR_BASE_URL, timeoutMillis: 15000)
+#if targetEnvironment(simulator)
+        let baseUrl = ApiConfig.companion.IOS_SIMULATOR_BASE_URL
+#else
+        let baseUrl = "http://192.168.1.52:8080"
+#endif
+        let config = ApiConfig(baseUrl: baseUrl, timeoutMillis: 15000)
         let storage = IosKeychainTokenStorage()
         let network = NetworkClient(apiConfig: config, tokenStorage: storage, httpClient: NetworkClient.companion.createDefaultHttpClient())
         let authRepo = AuthRepository(networkClient: network, tokenStorage: storage)
