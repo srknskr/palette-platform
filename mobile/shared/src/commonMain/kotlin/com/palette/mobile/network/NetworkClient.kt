@@ -131,9 +131,16 @@ class NetworkClient(
                 )
             }
         } catch (e: Exception) {
+            val userFriendlyMessage = when {
+                e.message?.contains("Could not connect to the server", ignoreCase = true) == true ||
+                e.message?.contains("failed with exception", ignoreCase = true) == true ||
+                e.message?.contains("ConnectException", ignoreCase = true) == true ||
+                e.message?.contains("NSURLErrorDomain", ignoreCase = true) == true -> "Sunucuya bağlanılamadı. Lütfen sunucunun çalıştığından ve internet bağlantınızdan emin olun."
+                else -> e.message ?: "Ağ iletişim hatası oluştu."
+            }
             AppResult.Error(
                 AppError(
-                    message = e.message ?: "Network communication error",
+                    message = userFriendlyMessage,
                     statusCode = null,
                     type = ErrorType.NETWORK
                 )
