@@ -7,6 +7,8 @@ import jakarta.persistence.Entity
 import jakarta.persistence.Table
 import java.io.Serializable
 import java.util.UUID
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
 
 @Embeddable
 data class PaletteColorId(
@@ -27,6 +29,7 @@ class PaletteColorEntity(
     @EmbeddedId
     var id: PaletteColorId = PaletteColorId(),
 
-    @Column(name = "hex_value", nullable = false, length = 7, columnDefinition = "CHAR(7)")
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @Column(name = "hex_value", nullable = false, length = 7)
     var hexValue: String = ""
 )
