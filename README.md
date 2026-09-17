@@ -28,7 +28,7 @@ The backend is built as a modular monolith:
 palette-platform/
 ├── backend/                 Kotlin + Spring Boot REST API
 ├── web/                     Vue.js + TypeScript client (planned)
-├── mobile/                  KMP, Android Compose, SwiftUI (planned)
+├── mobile/                  KMP, Android Compose, SwiftUI
 ├── infrastructure/         Docker and deployment configuration
 ├── docs/                    Product and engineering documentation
 └── .github/workflows/       Path-scoped CI pipelines
@@ -215,4 +215,7 @@ curl -X POST http://localhost:8080/api/v1/admin/palettes/<PALETTE_ID>/publish \
 - [Product specification](docs/PROJECT_SPEC.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Test strategy](docs/TEST_STRATEGY.md)
+- [Mobile architecture](docs/MOBILE_ARCHITECTURE.md)
+- [Mobile test strategy](docs/MOBILE_TEST_STRATEGY.md)
+- [Mobile design specification](docs/DESIGN_SPEC.md)
 - [Roadmap](docs/ROADMAP.md)

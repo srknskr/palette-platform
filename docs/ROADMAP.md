@@ -36,11 +36,11 @@
 
 ## Milestone 5 — Mobile
 
-- [ ] KMP shared networking and repositories
-- [ ] Android Compose application
-- [ ] iOS SwiftUI application
-- [ ] Offline cache and synchronization
-- [ ] Unit, UI, and Maestro tests
+- [x] KMP shared networking and repositories
+- [x] Android Compose application
+- [x] iOS SwiftUI application
+- [x] Offline cache and synchronization
+- [x] Unit, UI, and Maestro tests
 
 ## Milestone 6 — Web and release
 

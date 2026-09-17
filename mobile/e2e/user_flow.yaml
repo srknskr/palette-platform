@@ -1,0 +1,34 @@
+appId: com.palette.mobile.android
+---
+- launchApp
+- assertVisible: "Palette"
+- assertVisible: "New"
+- assertVisible: "Popular"
+- assertVisible: "Random"
+
+- tapOn: "Profile"
+- assertVisible: "Sign In or Register"
+- tapOn: "Create Account"
+- tapOn: "Display Name"
+- inputText: "Mobile Explorer"
+- tapOn: "Email"
+- inputText: "explorer@example.com"
+- tapOn: "Password"
+- inputText: "Password123!"
+- tapOn: "Create Account"
+- assertVisible: "Mobile Explorer"
+
+- tapOn: "Create"
+- tapOn: "Palette Name"
+- inputText: "Arctic Aurora"
+- tapOn: "Publish Palette"
+
+- tapOn: "Discover"
+- tapOn:
+    point: "85%,25%"
+- tapOn: "Collection"
+- assertVisible: "Collection"
+
+- tapOn: "Profile"
+- tapOn: "Log Out"
+- assertVisible: "Sign In or Register"
