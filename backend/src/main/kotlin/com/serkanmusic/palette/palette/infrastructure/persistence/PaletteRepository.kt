@@ -22,9 +22,9 @@ interface PaletteRepository : JpaRepository<PaletteEntity, UUID> {
         """
         SELECT p FROM PaletteEntity p
         WHERE p.status = 'PUBLISHED'
-        AND (:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')))
-        AND (:tagSlug IS NULL OR EXISTS (SELECT t FROM p.tags t WHERE t.slug = :tagSlug))
-        AND (:hexColor IS NULL OR EXISTS (SELECT c FROM p.colors c WHERE UPPER(c.hexValue) = UPPER(:hexColor)))
+        AND (cast(:name as string) IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', cast(:name as string), '%')))
+        AND (cast(:tagSlug as string) IS NULL OR EXISTS (SELECT t FROM p.tags t WHERE t.slug = cast(:tagSlug as string)))
+        AND (cast(:hexColor as string) IS NULL OR EXISTS (SELECT c FROM p.colors c WHERE UPPER(c.hexValue) = UPPER(cast(:hexColor as string))))
         """
     )
     fun findPublishedPalettes(
