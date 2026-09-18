@@ -29,5 +29,14 @@ services:
       postgres:
         condition: service_healthy
 
+  web:
+    profiles: ["full"]
+    build:
+      context: ../../web
+    ports:
+      - "3000:8080"
+    depends_on:
+      - backend
+
 volumes:
   palette_postgres_data:

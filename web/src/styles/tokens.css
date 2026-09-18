@@ -1,0 +1,89 @@
+:root {
+  /* Color Palette - Warm Ivory Brand */
+  --color-brand-ivory: #F6F4EF;
+  --color-brand-primary: #1A202C;
+  --color-brand-accent: #E53E3E;
+  
+  /* Light Theme (Default) */
+  --bg-primary: #F6F4EF;
+  --bg-surface: #FFFFFF;
+  --bg-surface-hover: #F8F9FA;
+  --bg-elevated: #FFFFFF;
+  --bg-input: #FFFFFF;
+  --bg-muted: #E2E8F0;
+  
+  --border-color: #E2E8F0;
+  --border-color-subtle: #EDF2F7;
+  --border-color-focus: #4A5568;
+  
+  --text-primary: #1A202C;
+  --text-secondary: #4A5568;
+  --text-muted: #718096;
+  --text-inverse: #F7FAFC;
+  
+  --accent-color: #3182CE;
+  --accent-hover: #2B6CB0;
+  --danger-color: #E53E3E;
+  --danger-hover: #C53030;
+  --success-color: #38A169;
+  --like-color: #E53E3E;
+  
+  /* Typography */
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  
+  /* Elevations & Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+  
+  /* Layout */
+  --sidebar-width: 260px;
+  --bottom-nav-height: 64px;
+  --header-height: 64px;
+  --max-content-width: 1280px;
+
+  /* Card Palette Bar Heights */
+  --bar-1-height: 70px;
+  --bar-2-height: 45px;
+  --bar-3-height: 35px;
+  --bar-4-height: 30px;
+}
+
+[data-theme="dark"] {
+  --bg-primary: #12151B;
+  --bg-surface: #1E232D;
+  --bg-surface-hover: #262D3A;
+  --bg-elevated: #242A36;
+  --bg-input: #171A21;
+  --bg-muted: #2D3748;
+  
+  --border-color: #2D3748;
+  --border-color-subtle: #232936;
+  --border-color-focus: #718096;
+  
+  --text-primary: #F7FAFC;
+  --text-secondary: #CBD5E0;
+  --text-muted: #A0AEC0;
+  --text-inverse: #1A202C;
+  
+  --accent-color: #4299E1;
+  --accent-hover: #63B3ED;
+  --danger-color: #FC8181;
+  --danger-hover: #FEB2B2;
+  --success-color: #48BB78;
+  --like-color: #FC8181;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+}
