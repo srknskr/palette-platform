@@ -25,6 +25,7 @@
 		460000012C12345600000010 /* ColorValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 460000022C12345600000010 /* ColorValidatorTests.swift */; };
 		460000012C12345600000011 /* DiscoverViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 460000022C12345600000011 /* DiscoverViewModelTests.swift */; };
 		460000012C12345600000012 /* SharedMobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 460000022C1234560000000F /* SharedMobile.framework */; };
+		460000012C12345600000013 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 460000022C12345600000013 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		460000022C1234560000000F /* SharedMobile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SharedMobile.framework; path = ../shared/build/bin/iosSimulatorArm64/debugFramework/SharedMobile.framework; sourceTree = "<group>"; };
 		460000022C12345600000010 /* ColorValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorValidatorTests.swift; sourceTree = "<group>"; };
 		460000022C12345600000011 /* DiscoverViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverViewModelTests.swift; sourceTree = "<group>"; };
+		460000022C12345600000013 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				460000022C12345600000001 /* iosApp.swift */,
+				460000022C12345600000013 /* Assets.xcassets */,
 				460000302C12345600000005 /* Design */,
 				460000302C12345600000006 /* ViewModels */,
 				460000302C12345600000007 /* Views */,
@@ -169,6 +172,7 @@
 			buildPhases = (
 				460000502C12345600000001 /* Sources */,
 				460000202C12345600000001 /* Frameworks */,
+				460000212C12345600000001 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -266,6 +270,17 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXResourcesBuildPhase section */
+		460000212C12345600000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				460000012C12345600000013 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		460000602C12345600000001 /* PBXTargetDependency */ = {
