@@ -44,8 +44,8 @@
 
 ## Milestone 6 — Web and release
 
-- [ ] Vue 3 + TypeScript application
-- [ ] Vitest and Playwright tests
-- [ ] Observability and security hardening
-- [ ] Production deployment
-- [ ] Play Store and App Store release preparation
+- [x] Vue 3 + TypeScript application
+- [x] Vitest and Playwright tests
+- [x] Observability and security hardening
+- [x] Production deployment
+- [x] Play Store and App Store release preparation
