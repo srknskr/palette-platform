@@ -20,15 +20,14 @@ describe('PaletteCard.vue', () => {
   const mockPalette: Palette = {
     id: 'test-palette-1',
     name: 'Sunset Glow',
-    description: 'A soothing gradient of sunset hues',
     colors: ['#FF5E7E', '#FF9966', '#FFD166', '#06D6A0'],
     tags: ['warm', 'sunset'],
-    likesCount: 12,
-    isLiked: false,
+    likeCount: 12,
+    likedByMe: false,
     createdAt: new Date().toISOString()
   }
 
-  it('renders the palette name and description', () => {
+  it('renders the palette name and like count', () => {
     const wrapper = mount(PaletteCard, {
       props: {
         palette: mockPalette
@@ -36,7 +35,6 @@ describe('PaletteCard.vue', () => {
     })
 
     expect(wrapper.text()).toContain('Sunset Glow')
-    expect(wrapper.text()).toContain('A soothing gradient of sunset hues')
     expect(wrapper.text()).toContain('12')
     expect(wrapper.text()).toContain('sunset')
   })

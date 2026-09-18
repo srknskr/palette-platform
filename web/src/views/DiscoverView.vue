@@ -45,13 +45,17 @@ const fetchPalettes = async (isInitial = true) => {
       size: 18
     })
 
+    const items = res.items || (res as unknown as { content: Palette[] }).content || []
+    const total = res.metadata?.totalElements ?? 0
+    const hasNext = res.metadata?.hasNext ?? false
+
     if (isInitial) {
-      palettes.value = res.content
+      palettes.value = items
     } else {
-      palettes.value = [...palettes.value, ...res.content]
+      palettes.value = [...palettes.value, ...items]
     }
 
-    hasMore.value = !res.last && palettes.value.length < res.totalElements
+    hasMore.value = hasNext && palettes.value.length < total
   } catch (err) {
     errorMessage.value = extractErrorMessage(err)
   } finally {

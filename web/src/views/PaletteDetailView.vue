@@ -45,8 +45,8 @@ const fetchPalette = async () => {
   try {
     const data = await paletteApi.getPaletteById(paletteId.value)
     palette.value = data
-    isLiked.value = data.isLiked ?? false
-    likesCount.value = data.likesCount ?? 0
+    isLiked.value = data.likedByMe ?? data.isLiked ?? false
+    likesCount.value = data.likeCount ?? data.likesCount ?? 0
   } catch (err) {
     errorMessage.value = extractErrorMessage(err)
   } finally {

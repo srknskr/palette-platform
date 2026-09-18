@@ -20,7 +20,7 @@ const fetchMyPalettes = async () => {
   isLoading.value = true
   try {
     const res = await paletteApi.getMyPalettes(0, 50)
-    myPalettes.value = res.content
+    myPalettes.value = res.items || (res as unknown as { content: Palette[] }).content || []
   } catch (err) {
     console.error('Failed to load my palettes', err)
   } finally {

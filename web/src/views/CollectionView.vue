@@ -31,12 +31,16 @@ const fetchFavorites = async (isInitial = true) => {
 
   try {
     const res = await paletteApi.getMyFavorites(page.value, 18)
+    const items = res.items || (res as unknown as { content: Palette[] }).content || []
+    const total = res.metadata?.totalElements ?? 0
+    const hasNext = res.metadata?.hasNext ?? false
+
     if (isInitial) {
-      favorites.value = res.content
+      favorites.value = items
     } else {
-      favorites.value = [...favorites.value, ...res.content]
+      favorites.value = [...favorites.value, ...items]
     }
-    hasMore.value = !res.last && favorites.value.length < res.totalElements
+    hasMore.value = hasNext && favorites.value.length < total
   } catch (err) {
     errorMessage.value = extractErrorMessage(err)
   } finally {

@@ -30,15 +30,19 @@ export interface Palette {
   id: string
   name: string
   description?: string
+  status?: string
+  likeCount: number
+  likesCount?: number // alias for compatibility
   colors: string[] // Exactly 4 hex colors
   tags: string[]
-  likesCount: number
-  isLiked?: boolean
-  isOwner?: boolean
-  creatorId?: string
+  createdBy?: string
+  creatorId?: string // alias
   creatorName?: string
   createdAt: string
-  updatedAt?: string
+  publishedAt?: string
+  likedByMe?: boolean
+  isLiked?: boolean // alias
+  isOwner?: boolean
 }
 
 export interface CreatePaletteRequest {
@@ -46,23 +50,31 @@ export interface CreatePaletteRequest {
   description?: string
   colors: string[] // Exactly 4 hex colors
   tags?: string[]
+  publish?: boolean
 }
 
 export interface UpdatePaletteRequest {
   name?: string
-  description?: string
   colors?: string[] // Exactly 4 hex colors
   tags?: string[]
 }
 
-export interface PageResponse<T> {
-  content: T[]
-  pageNumber: number
-  pageSize: number
+export interface PageMetadata {
+  page: number
+  size: number
   totalElements: number
   totalPages: number
-  last: boolean
+  hasNext: boolean
+  hasPrevious: boolean
 }
+
+export interface PagedResponse<T> {
+  items: T[]
+  metadata: PageMetadata
+}
+
+// Alias for backward compatibility
+export type PageResponse<T> = PagedResponse<T>
 
 export interface PaletteQueryParams {
   name?: string
