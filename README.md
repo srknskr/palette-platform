@@ -27,11 +27,11 @@ The backend is built as a modular monolith:
 ```text
 palette-platform/
 ├── backend/                 Kotlin + Spring Boot REST API
-├── web/                     Vue.js + TypeScript client (planned)
+├── web/                     Vue.js 3 + TypeScript Client (Vite, Pinia)
 ├── mobile/                  KMP, Android Compose, SwiftUI
-├── infrastructure/         Docker and deployment configuration
+├── infrastructure/          Docker and deployment configuration
 ├── docs/                    Product and engineering documentation
-└── .github/workflows/       Path-scoped CI pipelines
+└── .github/workflows/       Path-scoped CI and Release pipelines
 ```
 
 ## Environment Variables
