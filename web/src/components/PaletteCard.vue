@@ -24,8 +24,8 @@ const router = useRouter()
 const authStore = useAuthStore()
 const toastStore = useToastStore()
 
-const isLiked = ref(props.palette.isLiked ?? false)
-const likesCount = ref(props.palette.likesCount ?? 0)
+const isLiked = ref(props.palette.likedByMe ?? props.palette.isLiked ?? false)
+const likesCount = ref(props.palette.likeCount ?? props.palette.likesCount ?? 0)
 const isTogglingLike = ref(false)
 const isDeleting = ref(false)
 
