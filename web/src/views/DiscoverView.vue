@@ -19,6 +19,7 @@ const searchQuery = ref((route.query.q as string) || '')
 const selectedTag = ref((route.query.tag as string) || '')
 
 const palettes = ref<Palette[]>([])
+const paletteCount = ref<number | null>(null)
 const isLoading = ref(true)
 const errorMessage = ref<string | null>(null)
 const page = ref(0)
@@ -26,6 +27,14 @@ const hasMore = ref(true)
 const isLoadingMore = ref(false)
 
 const popularTags = ['vintage', 'pastel', 'neon', 'earthy', 'minimal', 'cyberpunk', 'warm', 'cool']
+
+const fetchPaletteCount = async () => {
+  try {
+    paletteCount.value = await paletteApi.getPaletteCount()
+  } catch {
+    paletteCount.value = null
+  }
+}
 
 const fetchPalettes = async (isInitial = true) => {
   if (isInitial) {
@@ -123,6 +132,7 @@ const getRandomSinglePalette = async () => {
 
 onMounted(() => {
   fetchPalettes(true)
+  fetchPaletteCount()
 })
 
 watch(
@@ -140,7 +150,10 @@ watch(
     <!-- Hero / Discovery Header -->
     <div class="discover-header">
       <div class="header-intro">
-        <h1 class="title-lg">Discover Palettes</h1>
+        <div class="title-with-badge">
+          <h1 class="title-lg">Discover Palettes</h1>
+          <span v-if="paletteCount !== null" class="badge count-badge">{{ paletteCount }} Palettes</span>
+        </div>
         <p class="subtitle">Explore thousands of beautifully curated 4-color palettes for your next design project.</p>
       </div>
 
@@ -290,6 +303,18 @@ watch(
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+.title-with-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.count-badge {
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
 }
 
 .random-btn {

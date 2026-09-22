@@ -4,6 +4,7 @@ import SharedMobile
 @MainActor
 class DiscoverViewModel: ObservableObject {
     @Published var palettes: [Palette] = []
+    @Published var paletteCount: Int64? = nil
     @Published var isLoading = false
     @Published var errorMessage: String? = nil
     @Published var searchQuery = ""
@@ -12,11 +13,17 @@ class DiscoverViewModel: ObservableObject {
 
     private let getPalettesUseCase: GetPalettesUseCase
     private let toggleFavoriteUseCase: ToggleFavoriteUseCase
+    private let getPublishedPaletteCountUseCase: GetPublishedPaletteCountUseCase
     private var currentPage = 0
 
-    init(getPalettesUseCase: GetPalettesUseCase, toggleFavoriteUseCase: ToggleFavoriteUseCase) {
+    init(
+        getPalettesUseCase: GetPalettesUseCase,
+        toggleFavoriteUseCase: ToggleFavoriteUseCase,
+        getPublishedPaletteCountUseCase: GetPublishedPaletteCountUseCase
+    ) {
         self.getPalettesUseCase = getPalettesUseCase
         self.toggleFavoriteUseCase = toggleFavoriteUseCase
+        self.getPublishedPaletteCountUseCase = getPublishedPaletteCountUseCase
     }
 
     func loadPalettes(isRefresh: Bool = false) async {
@@ -84,6 +91,19 @@ class DiscoverViewModel: ObservableObject {
                 }
             }
         } catch {
+        }
+    }
+
+    func loadPaletteCount() async {
+        do {
+            let result = try await getPublishedPaletteCountUseCase.invoke()
+            if let success = result as? AppResultSuccess<KotlinLong>, let count = success.data {
+                paletteCount = count.int64Value
+            } else {
+                paletteCount = nil
+            }
+        } catch {
+            paletteCount = nil
         }
     }
 }

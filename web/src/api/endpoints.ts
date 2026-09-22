@@ -5,6 +5,7 @@ import type {
   LoginRequest,
   PageResponse,
   Palette,
+  PaletteCountResponse,
   PaletteQueryParams,
   RegisterRequest,
   UpdatePaletteRequest,
@@ -46,6 +47,11 @@ export const paletteApi = {
   async getRandomPalette(): Promise<Palette> {
     const res = await apiClient.get<Palette>('/api/v1/palettes/random')
     return res.data
+  },
+
+  async getPaletteCount(): Promise<number> {
+    const res = await apiClient.get<PaletteCountResponse>('/api/v1/palettes/count')
+    return res.data.count
   },
 
   async createPalette(data: CreatePaletteRequest): Promise<Palette> {

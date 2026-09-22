@@ -12,11 +12,13 @@ final class DiscoverViewModelTests: XCTestCase {
 
         let vm = DiscoverViewModel(
             getPalettesUseCase: GetPalettesUseCase(paletteRepository: paletteRepo),
-            toggleFavoriteUseCase: ToggleFavoriteUseCase(favoriteRepository: favRepo)
+            toggleFavoriteUseCase: ToggleFavoriteUseCase(favoriteRepository: favRepo),
+            getPublishedPaletteCountUseCase: GetPublishedPaletteCountUseCase(paletteRepository: paletteRepo)
         )
 
         XCTAssertEqual(vm.selectedSort, .newest)
         XCTAssertTrue(vm.palettes.isEmpty)
         XCTAssertFalse(vm.isLoading)
+        XCTAssertNil(vm.paletteCount)
     }
 }

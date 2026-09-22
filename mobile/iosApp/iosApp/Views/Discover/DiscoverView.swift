@@ -35,6 +35,16 @@ struct DiscoverView: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .padding(.horizontal, 16)
 
+            if let count = viewModel.paletteCount {
+                HStack {
+                    Text("Published Palettes: \(count)")
+                        .font(.footnote)
+                        .foregroundColor(.gray)
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+            }
+
             HStack(spacing: 8) {
                 FilterButton(title: "New", isSelected: viewModel.selectedSort == .newest) {
                     viewModel.selectedSort = .newest
@@ -101,15 +111,21 @@ struct DiscoverView: View {
                     .padding(16)
                 }
                 .refreshable {
-                    await viewModel.loadPalettes(isRefresh: true)
+                    async let p: () = viewModel.loadPalettes(isRefresh: true)
+                    async let c: () = viewModel.loadPaletteCount()
+                    _ = await (p, c)
                 }
             }
         }
         .background(Color.warmBackground)
         .navigationTitle("Palette")
         .task {
+            async let c: () = viewModel.loadPaletteCount()
             if viewModel.palettes.isEmpty {
-                await viewModel.loadPalettes(isRefresh: true)
+                async let p: () = viewModel.loadPalettes(isRefresh: true)
+                _ = await (p, c)
+            } else {
+                _ = await c
             }
         }
     }
