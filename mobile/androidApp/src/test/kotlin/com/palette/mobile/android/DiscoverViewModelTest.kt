@@ -9,6 +9,7 @@ import com.palette.mobile.favorite.usecase.ToggleFavoriteUseCase
 import com.palette.mobile.palette.model.Palette
 import com.palette.mobile.palette.model.PaletteFilter
 import com.palette.mobile.palette.usecase.GetPalettesUseCase
+import com.palette.mobile.palette.usecase.GetPublishedPaletteCountUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -32,6 +33,7 @@ class DiscoverViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private val getPalettesUseCase = mockk<GetPalettesUseCase>()
     private val toggleFavoriteUseCase = mockk<ToggleFavoriteUseCase>()
+    private val getPublishedPaletteCountUseCase = mockk<GetPublishedPaletteCountUseCase>()
 
     private val samplePalette = Palette(
         id = "p-1",
@@ -63,13 +65,15 @@ class DiscoverViewModelTest {
             metadata = PageMetadata(0, 20, 1, 1, false, false)
         )
         coEvery { getPalettesUseCase(any(), any(), any()) } returns AppResult.Success(pagedList)
+        coEvery { getPublishedPaletteCountUseCase() } returns AppResult.Success(1L)
 
-        val viewModel = DiscoverViewModel(getPalettesUseCase, toggleFavoriteUseCase)
+        val viewModel = DiscoverViewModel(getPalettesUseCase, toggleFavoriteUseCase, getPublishedPaletteCountUseCase)
         advanceUntilIdle()
 
         val state = viewModel.uiState.first()
         assertTrue(state is DiscoverUiState.Success)
         assertEquals(1, (state as DiscoverUiState.Success).palettes.size)
+        assertEquals(1L, viewModel.paletteCount.value)
     }
 
     @Test
@@ -80,8 +84,9 @@ class DiscoverViewModelTest {
         )
         coEvery { getPalettesUseCase(any(), any(), any()) } returns AppResult.Success(pagedList)
         coEvery { toggleFavoriteUseCase(samplePalette) } returns AppResult.Success(true)
+        coEvery { getPublishedPaletteCountUseCase() } returns AppResult.Success(1L)
 
-        val viewModel = DiscoverViewModel(getPalettesUseCase, toggleFavoriteUseCase)
+        val viewModel = DiscoverViewModel(getPalettesUseCase, toggleFavoriteUseCase, getPublishedPaletteCountUseCase)
         advanceUntilIdle()
 
         var authTriggered = false
