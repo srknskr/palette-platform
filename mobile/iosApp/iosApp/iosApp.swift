@@ -38,7 +38,8 @@ struct PaletteApp: App {
         self.authViewModel = AuthViewModel(authRepository: authRepo)
         self.discoverViewModel = DiscoverViewModel(
             getPalettesUseCase: GetPalettesUseCase(paletteRepository: paletteRepo),
-            toggleFavoriteUseCase: ToggleFavoriteUseCase(favoriteRepository: favRepo)
+            toggleFavoriteUseCase: ToggleFavoriteUseCase(favoriteRepository: favRepo),
+            getPublishedPaletteCountUseCase: GetPublishedPaletteCountUseCase(paletteRepository: paletteRepo)
         )
         self.createViewModel = CreateViewModel(createPaletteUseCase: CreatePaletteUseCase(paletteRepository: paletteRepo))
         self.collectionViewModel = CollectionViewModel(

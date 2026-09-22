@@ -92,3 +92,7 @@ export interface ApiError {
   path?: string
   errors?: Record<string, string>
 }
+
+export interface PaletteCountResponse {
+  count: number
+}
