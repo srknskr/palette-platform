@@ -183,6 +183,11 @@ class PaletteService(
         return mapToPagedResponse(pageResult, currentUserId = userId)
     }
 
+    @Transactional(readOnly = true)
+    fun getPublishedPaletteCount(): Long {
+        return paletteRepository.countByStatus(PaletteStatus.PUBLISHED)
+    }
+
     private fun mapToPagedResponse(page: Page<PaletteEntity>, currentUserId: UUID?): PagedResponse<PaletteResponse> {
         val paletteIds = page.content.map { it.id }
         val favoritedIds = if (currentUserId != null && paletteIds.isNotEmpty()) {

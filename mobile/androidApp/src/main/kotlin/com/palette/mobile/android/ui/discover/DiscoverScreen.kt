@@ -54,6 +54,7 @@ fun DiscoverScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val filter by viewModel.filter.collectAsState()
+    val paletteCount by viewModel.paletteCount.collectAsState()
     var searchInput by remember { mutableStateOf("") }
     val gridState = rememberLazyGridState()
 
@@ -105,6 +106,16 @@ fun DiscoverScreen(
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp)
             )
+
+            paletteCount?.let { count ->
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "Published Palettes: $count",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
 

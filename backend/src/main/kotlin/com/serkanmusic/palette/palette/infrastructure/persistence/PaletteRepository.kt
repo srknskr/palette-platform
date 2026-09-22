@@ -57,4 +57,6 @@ interface PaletteRepository : JpaRepository<PaletteEntity, UUID> {
     @Modifying
     @Query("UPDATE PaletteEntity p SET p.likeCount = CASE WHEN p.likeCount > 0 THEN p.likeCount - 1 ELSE 0 END WHERE p.id = :id")
     fun decrementLikeCount(@Param("id") id: UUID): Int
+
+    fun countByStatus(status: PaletteStatus): Long
 }

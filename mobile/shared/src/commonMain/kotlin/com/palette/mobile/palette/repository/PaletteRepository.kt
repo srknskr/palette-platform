@@ -162,4 +162,10 @@ class PaletteRepository(
             }
         }
     }
+
+    suspend fun getPublishedPaletteCount(): AppResult<Long> {
+        return networkClient.getPaletteCount().map { response ->
+            response.count
+        }
+    }
 }

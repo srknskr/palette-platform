@@ -4,6 +4,7 @@ import com.serkanmusic.palette.identity.infrastructure.security.AuthenticatedUse
 import com.serkanmusic.palette.palette.api.dto.CreatePaletteRequest
 import com.serkanmusic.palette.palette.api.dto.PaletteResponse
 import com.serkanmusic.palette.palette.api.dto.UpdatePaletteRequest
+import com.serkanmusic.palette.palette.api.dto.PaletteCountResponse
 import com.serkanmusic.palette.palette.application.PaletteService
 import com.serkanmusic.palette.shared.dto.PagedResponse
 import io.swagger.v3.oas.annotations.Operation
@@ -117,5 +118,11 @@ class PaletteController(
     ): ResponseEntity<PagedResponse<PaletteResponse>> {
         val response = paletteService.listMyPalettes(principal.id, page, size)
         return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/palettes/count")
+    fun getPublishedPaletteCount(): ResponseEntity<PaletteCountResponse> {
+        val count = paletteService.getPublishedPaletteCount()
+        return ResponseEntity.ok(PaletteCountResponse(count))
     }
 }

@@ -9,6 +9,7 @@ import com.palette.mobile.palette.model.Palette
 import com.palette.mobile.palette.model.PaletteFilter
 import com.palette.mobile.palette.model.PaletteSort
 import com.palette.mobile.palette.usecase.GetPalettesUseCase
+import com.palette.mobile.palette.usecase.GetPublishedPaletteCountUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,7 +27,8 @@ sealed interface DiscoverUiState {
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
     private val getPalettesUseCase: GetPalettesUseCase,
-    private val toggleFavoriteUseCase: ToggleFavoriteUseCase
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
+    private val getPublishedPaletteCountUseCase: GetPublishedPaletteCountUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<DiscoverUiState>(DiscoverUiState.Loading)
@@ -35,12 +37,16 @@ class DiscoverViewModel @Inject constructor(
     private val _filter = MutableStateFlow(PaletteFilter())
     val filter: StateFlow<PaletteFilter> = _filter.asStateFlow()
 
+    private val _paletteCount = MutableStateFlow<Long?>(null)
+    val paletteCount: StateFlow<Long?> = _paletteCount.asStateFlow()
+
     private var currentPage = 0
     private var isLoadingMore = false
     private val currentItems = mutableListOf<Palette>()
 
     init {
         loadPalettes()
+        loadPaletteCount()
     }
 
     fun loadPalettes(isRefresh: Boolean = false) {
@@ -97,6 +103,20 @@ class DiscoverViewModel @Inject constructor(
                     }
                 }
                 isLoadingMore = false
+            }
+        }
+    }
+
+    fun loadPaletteCount() {
+        viewModelScope.launch {
+            when (val result = getPublishedPaletteCountUseCase()) {
+                is AppResult.Success -> {
+                    _paletteCount.value = result.data
+                }
+
+                is AppResult.Error -> {
+                    _paletteCount.value = null
+                }
             }
         }
     }
