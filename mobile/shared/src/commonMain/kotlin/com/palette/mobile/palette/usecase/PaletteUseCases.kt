@@ -79,3 +79,9 @@ class GetMyPalettesUseCase(private val paletteRepository: PaletteRepository) {
         return paletteRepository.getMyPalettes(page, size)
     }
 }
+
+class GetPublishedPaletteCountUseCase(private val paletteRepository: PaletteRepository) {
+    suspend operator fun invoke(): AppResult<Long> {
+        return paletteRepository.getPublishedPaletteCount()
+    }
+}

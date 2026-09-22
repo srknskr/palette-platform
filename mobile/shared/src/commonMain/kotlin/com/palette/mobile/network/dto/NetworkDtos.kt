@@ -96,3 +96,8 @@ data class ProblemDetailDto(
     val instance: String? = null,
     val errors: Map<String, String>? = null
 )
+
+@Serializable
+data class PaletteCountResponseDto(
+    val count: Long
+)

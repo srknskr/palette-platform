@@ -22,6 +22,7 @@ import com.palette.mobile.palette.usecase.GetMyPalettesUseCase
 import com.palette.mobile.palette.usecase.GetPaletteDetailUseCase
 import com.palette.mobile.palette.usecase.GetPalettesUseCase
 import com.palette.mobile.palette.usecase.GetRandomPaletteUseCase
+import com.palette.mobile.palette.usecase.GetPublishedPaletteCountUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -130,4 +131,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideObserveFavoritesUseCase(favoriteRepository: FavoriteRepository): ObserveFavoritesUseCase = ObserveFavoritesUseCase(favoriteRepository)
+
+    @Provides
+    @Singleton
+    fun provideGetPublishedPaletteCountUseCase(paletteRepository: PaletteRepository): GetPublishedPaletteCountUseCase {
+        return GetPublishedPaletteCountUseCase(paletteRepository)
+    }
 }

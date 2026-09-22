@@ -19,6 +19,7 @@ import com.palette.mobile.network.dto.RefreshRequestDto
 import com.palette.mobile.network.dto.RegisterRequestDto
 import com.palette.mobile.network.dto.UpdatePaletteRequestDto
 import com.palette.mobile.network.dto.UserResponseDto
+import com.palette.mobile.network.dto.PaletteCountResponseDto
 import com.palette.mobile.palette.model.Palette
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -304,6 +305,22 @@ class NetworkClient(
                 parameter("size", size)
             }
         }, parser = { it.body<PagedResponseDto<PaletteResponseDto>>() })
+    }
+
+    suspend fun getPaletteCount(): AppResult<PaletteCountResponseDto> {
+        return executeRequest(
+            requiresAuth = false,
+            block = { token ->
+                httpClient.get("${apiConfig.baseUrl}/api/v1/palettes/count") {
+                    if (token != null) {
+                        header(HttpHeaders.Authorization, "Bearer $token")
+                    }
+                }
+            },
+            parser = {
+                it.body<PaletteCountResponseDto>()
+            }
+        )
     }
 }
 

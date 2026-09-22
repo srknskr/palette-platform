@@ -44,3 +44,7 @@ data class PaletteResponse(
     val publishedAt: Instant?,
     val likedByMe: Boolean = false
 )
+
+data class PaletteCountResponse(
+    val count: Long
+)
