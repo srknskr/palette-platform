@@ -46,6 +46,7 @@ class PaletteService(
             id = paletteId,
             createdBy = userId,
             name = request.name.trim(),
+            description = request.description?.trim()?.takeIf { it.isNotBlank() },
             status = initialStatus,
             likeCount = 0,
             tags = tagEntities.toMutableSet(),
@@ -78,6 +79,7 @@ class PaletteService(
         val tagEntities = resolveTags(request.tags)
 
         paletteEntity.name = request.name.trim()
+        paletteEntity.description = request.description?.trim()?.takeIf { it.isNotBlank() }
         paletteEntity.updatedAt = Instant.now()
         paletteEntity.tags = tagEntities.toMutableSet()
 
@@ -235,6 +237,7 @@ class PaletteService(
         return PaletteResponse(
             id = domain.id,
             name = domain.name,
+            description = domain.description,
             status = domain.status.name,
             likeCount = domain.likeCount,
             colors = domain.colors.sortedBy { it.position }.map { it.hexValue },

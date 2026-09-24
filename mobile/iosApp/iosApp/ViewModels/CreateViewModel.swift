@@ -4,6 +4,7 @@ import SharedMobile
 @MainActor
 class CreateViewModel: ObservableObject {
     @Published var name = ""
+    @Published var descriptionText = ""
     @Published var colors = ["#2E3440", "#4C566A", "#D8DEE9", "#ECEFF4"]
     @Published var tags = ""
     @Published var isSubmitting = false
@@ -28,6 +29,13 @@ class CreateViewModel: ObservableObject {
             return
         }
 
+        let trimmedDescription = descriptionText.trimmingCharacters(in: .whitespaces)
+        let finalDescription = trimmedDescription.isEmpty ? nil : trimmedDescription
+        if let desc = finalDescription, desc.count > 250 {
+            errorMessage = "Description must not exceed 250 characters"
+            return
+        }
+
         let validation = ColorValidator.shared.validatePaletteColors(colors: colors)
         if let invalid = validation as? ValidationResultInvalid {
             errorMessage = invalid.reason
@@ -46,6 +54,7 @@ class CreateViewModel: ObservableObject {
         do {
             let result = try await createPaletteUseCase.invoke(
                 name: trimmedName,
+                description: finalDescription,
                 colors: valid.normalizedColors,
                 tags: tagList,
                 publish: true
@@ -69,5 +78,6 @@ class CreateViewModel: ObservableObject {
     func reset() {
         createdPalette = nil
         errorMessage = nil
+        descriptionText = ""
     }
 }

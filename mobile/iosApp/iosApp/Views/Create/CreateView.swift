@@ -42,6 +42,17 @@ struct CreateView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
+                    Text("Description (Optional)")
+                        .font(.headline)
+                        .foregroundColor(.warmTextPrimary)
+
+                    TextField("e.g. A serene winter morning color scheme", text: $viewModel.descriptionText)
+                        .padding(12)
+                        .background(Color.warmSurface)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                }
+
+                VStack(alignment: .leading, spacing: 8) {
                     Text("Colors (4 distinct HEX values)")
                         .font(.headline)
                         .foregroundColor(.warmTextPrimary)

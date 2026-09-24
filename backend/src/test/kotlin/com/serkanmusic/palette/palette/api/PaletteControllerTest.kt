@@ -52,6 +52,7 @@ class PaletteControllerTest {
                 PaletteResponse(
                     id = UUID.randomUUID(),
                     name = "Palette 1",
+                    description = null,
                     status = "PUBLISHED",
                     likeCount = 10,
                     colors = listOf("#111111", "#222222", "#333333", "#444444"),
@@ -108,6 +109,7 @@ class PaletteControllerTest {
         val response = PaletteResponse(
             id = UUID.randomUUID(),
             name = "Sunny",
+            description = null,
             status = "PUBLISHED",
             likeCount = 0,
             colors = listOf("#111111", "#222222", "#333333", "#444444"),

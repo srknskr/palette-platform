@@ -335,6 +335,7 @@ fun UserResponseDto.toDomain(): User = User(
 fun PaletteResponseDto.toDomain(): Palette = Palette(
     id = id,
     name = name,
+    paletteDescription = description,
     status = status,
     likeCount = likeCount,
     colors = colors,

@@ -60,6 +60,7 @@ class AdminPaletteControllerTest {
                 PaletteResponse(
                     id = UUID.randomUUID(),
                     name = "Pending Review",
+                    description = null,
                     status = "PENDING",
                     likeCount = 0,
                     colors = listOf("#111111", "#222222", "#333333", "#444444"),
@@ -90,6 +91,7 @@ class AdminPaletteControllerTest {
         val response = PaletteResponse(
             id = paletteId,
             name = "Approved",
+            description = null,
             status = "PUBLISHED",
             likeCount = 0,
             colors = listOf("#111111", "#222222", "#333333", "#444444"),

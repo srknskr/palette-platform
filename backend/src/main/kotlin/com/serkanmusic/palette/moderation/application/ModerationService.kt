@@ -107,6 +107,7 @@ class ModerationService(
         return PaletteResponse(
             id = domain.id,
             name = domain.name,
+            description = domain.description,
             status = domain.status.name,
             likeCount = domain.likeCount,
             colors = domain.colors.sortedBy { it.position }.map { it.hexValue },

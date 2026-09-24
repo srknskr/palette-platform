@@ -1,8 +1,10 @@
 import XCTest
 import SharedMobile
+@testable import iosApp
 
 final class DiscoverViewModelTests: XCTestCase {
 
+    @MainActor
     func testSortDefaultsToNewest() {
         let storage = InMemoryTokenStorage()
         let config = ApiConfig(baseUrl: "http://localhost:8080", timeoutMillis: 5000)

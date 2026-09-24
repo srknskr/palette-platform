@@ -31,6 +31,7 @@ class GetRandomPaletteUseCase(private val paletteRepository: PaletteRepository) 
 class CreatePaletteUseCase(private val paletteRepository: PaletteRepository) {
     suspend operator fun invoke(
         name: String,
+        description: String? = null,
         colors: List<String>,
         tags: List<String>,
         publish: Boolean = true
@@ -42,6 +43,17 @@ class CreatePaletteUseCase(private val paletteRepository: PaletteRepository) {
                     message = "Palette name must be between 2 and 80 characters",
                     type = ErrorType.VALIDATION,
                     validationErrors = mapOf("name" to "Length must be between 2 and 80 characters")
+                )
+            )
+        }
+
+        val trimmedDescription = description?.trim()?.ifBlank { null }
+        if (trimmedDescription != null && trimmedDescription.length > 250) {
+            return AppResult.Error(
+                AppError(
+                    message = "Palette description must not exceed 250 characters",
+                    type = ErrorType.VALIDATION,
+                    validationErrors = mapOf("description" to "Length must not exceed 250 characters")
                 )
             )
         }
@@ -59,6 +71,7 @@ class CreatePaletteUseCase(private val paletteRepository: PaletteRepository) {
             is ValidationResult.Valid -> {
                 return paletteRepository.createPalette(
                     name = trimmedName,
+                    description = trimmedDescription,
                     colors = validation.normalizedColors,
                     tags = tags.map { it.trim().lowercase() }.filter { it.isNotBlank() },
                     publish = publish

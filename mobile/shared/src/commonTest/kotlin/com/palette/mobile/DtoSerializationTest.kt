@@ -23,6 +23,7 @@ class DtoSerializationTest {
             {
                 "id": "c3f8e6c4-1234-5678-9abc-def012345678",
                 "name": "Nordic Frost",
+                "description": "A crisp winter palette",
                 "status": "PUBLISHED",
                 "likeCount": 42,
                 "colors": ["#2E3440", "#4C566A", "#D8DEE9", "#ECEFF4"],
@@ -39,6 +40,7 @@ class DtoSerializationTest {
 
         assertEquals("c3f8e6c4-1234-5678-9abc-def012345678", domain.id)
         assertEquals("Nordic Frost", domain.name)
+        assertEquals("A crisp winter palette", domain.paletteDescription)
         assertEquals(42L, domain.likeCount)
         assertEquals(4, domain.colors.size)
         assertTrue(domain.likedByMe)

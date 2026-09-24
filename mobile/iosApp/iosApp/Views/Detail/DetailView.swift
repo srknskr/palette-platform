@@ -53,6 +53,12 @@ struct DetailView: View {
                         .fontWeight(.bold)
                         .foregroundColor(.warmTextPrimary)
 
+                    if let desc = palette.paletteDescription, !desc.trimmingCharacters(in: .whitespaces).isEmpty {
+                        Text(desc)
+                            .font(.body)
+                            .foregroundColor(.warmTextSecondary)
+                    }
+
                     Text("\(palette.likeCount) likes • \(palette.status)")
                         .font(.subheadline)
                         .foregroundColor(.warmTextSecondary)

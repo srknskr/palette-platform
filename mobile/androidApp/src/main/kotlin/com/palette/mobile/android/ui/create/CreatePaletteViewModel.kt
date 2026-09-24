@@ -38,8 +38,15 @@ class CreatePaletteViewModel @Inject constructor(
     private val _tags = MutableStateFlow("")
     val tags: StateFlow<String> = _tags.asStateFlow()
 
+    private val _description = MutableStateFlow("")
+    val description: StateFlow<String> = _description.asStateFlow()
+
     fun setName(value: String) {
         _name.value = value
+    }
+
+    fun setDescription(value: String) {
+        _description.value = value
     }
 
     fun setTags(value: String) {
@@ -74,6 +81,15 @@ class CreatePaletteViewModel @Inject constructor(
             return
         }
 
+        val trimmedDescription = _description.value.trim().ifBlank { null }
+        if (trimmedDescription != null && trimmedDescription.length > 250) {
+            _uiState.value = CreateUiState.Error(
+                message = "Description must not exceed 250 characters",
+                fieldErrors = mapOf("description" to "Description must not exceed 250 characters")
+            )
+            return
+        }
+
         val validation = ColorValidator.validatePaletteColors(_colors.value)
         if (validation is ValidationResult.Invalid) {
             _uiState.value = CreateUiState.Error(
@@ -91,6 +107,7 @@ class CreatePaletteViewModel @Inject constructor(
             _uiState.value = CreateUiState.Submitting
             when (val result = createPaletteUseCase(
                 name = trimmedName,
+                description = trimmedDescription,
                 colors = (validation as ValidationResult.Valid).normalizedColors,
                 tags = tagList,
                 publish = true

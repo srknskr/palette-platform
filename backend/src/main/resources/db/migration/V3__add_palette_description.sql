@@ -1,0 +1,2 @@
+ALTER TABLE palettes
+ADD COLUMN description VARCHAR(250);
