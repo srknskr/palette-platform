@@ -53,6 +53,7 @@ fun CreatePaletteScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val name by viewModel.name.collectAsState()
+    val description by viewModel.description.collectAsState()
     val colors by viewModel.colors.collectAsState()
     val tags by viewModel.tags.collectAsState()
 
@@ -111,6 +112,18 @@ fun CreatePaletteScreen(
             placeholder = { Text("e.g. Nordic Frost") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
+            shape = RoundedCornerShape(12.dp)
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        OutlinedTextField(
+            value = description,
+            onValueChange = { viewModel.setDescription(it) },
+            label = { Text("Description (Optional)") },
+            placeholder = { Text("e.g. A serene winter morning color scheme") },
+            modifier = Modifier.fillMaxWidth(),
+            maxLines = 3,
             shape = RoundedCornerShape(12.dp)
         )
 

@@ -11,6 +11,9 @@ data class CreatePaletteRequest(
     @field:Size(min = 2, max = 80)
     val name: String,
 
+    @field:Size(max = 250)
+    val description: String? = null,
+
     @field:NotEmpty
     @field:Size(min = 4, max = 4)
     val colors: List<String>,
@@ -25,6 +28,9 @@ data class UpdatePaletteRequest(
     @field:Size(min = 2, max = 80)
     val name: String,
 
+    @field:Size(max = 250)
+    val description: String? = null,
+
     @field:NotEmpty
     @field:Size(min = 4, max = 4)
     val colors: List<String>,
@@ -35,6 +41,7 @@ data class UpdatePaletteRequest(
 data class PaletteResponse(
     val id: UUID,
     val name: String,
+    val description: String?,
     val status: String,
     val likeCount: Long,
     val colors: List<String>,

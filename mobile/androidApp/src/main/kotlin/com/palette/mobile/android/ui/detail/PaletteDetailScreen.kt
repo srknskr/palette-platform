@@ -173,7 +173,7 @@ fun PaletteDetailScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Column {
+                            Column(modifier = Modifier.weight(1f, fill = false)) {
                                 Text(
                                     text = palette.name,
                                     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
@@ -195,6 +195,16 @@ fun PaletteDetailScreen(
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(text = if (palette.likedByMe) "Liked" else "Like")
                             }
+                        }
+
+                        if (!palette.paletteDescription.isNullOrBlank()) {
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Text(
+                                text = palette.paletteDescription!!,
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            )
                         }
 
                         if (palette.tags.isNotEmpty()) {

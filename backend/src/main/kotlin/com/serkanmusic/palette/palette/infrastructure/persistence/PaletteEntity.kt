@@ -32,6 +32,9 @@ class PaletteEntity(
     @Column(nullable = false, length = 80)
     var name: String,
 
+    @Column(length = 250)
+    var description: String? = null,
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     var status: PaletteStatus = PaletteStatus.DRAFT,
@@ -65,6 +68,7 @@ class PaletteEntity(
         id = id,
         createdBy = createdBy,
         name = name,
+        description = description,
         status = status,
         likeCount = likeCount,
         colors = colors.map { PaletteColor(it.id.position.toInt(), it.hexValue) },

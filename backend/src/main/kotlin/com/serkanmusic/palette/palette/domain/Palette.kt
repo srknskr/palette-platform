@@ -18,6 +18,7 @@ data class Palette(
     val id: UUID,
     val createdBy: UUID,
     val name: String,
+    val description: String?,
     val status: PaletteStatus,
     val likeCount: Long,
     val colors: List<PaletteColor>,

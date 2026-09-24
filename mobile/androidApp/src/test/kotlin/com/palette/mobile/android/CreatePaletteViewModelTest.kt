@@ -78,10 +78,11 @@ class CreatePaletteViewModelTest {
             publishedAt = "2026-09-17T08:00:00Z",
             likedByMe = false
         )
-        coEvery { createPaletteUseCase(any(), any(), any(), any()) } returns AppResult.Success(created)
+        coEvery { createPaletteUseCase(any(), any(), any(), any(), any()) } returns AppResult.Success(created)
 
         val viewModel = CreatePaletteViewModel(createPaletteUseCase)
         viewModel.setName("Nordic")
+        viewModel.setDescription("A crisp winter palette")
         viewModel.updateColor(0, "#111111")
         viewModel.updateColor(1, "#222222")
         viewModel.updateColor(2, "#333333")
@@ -93,5 +94,19 @@ class CreatePaletteViewModelTest {
         val state = viewModel.uiState.first()
         assertTrue(state is CreateUiState.Success)
         assertEquals("new-p", (state as CreateUiState.Success).palette.id)
+    }
+
+    @Test
+    fun submitWithTooLongDescriptionFailsValidation() = runTest(testDispatcher) {
+        val viewModel = CreatePaletteViewModel(createPaletteUseCase)
+        viewModel.setName("Valid Name")
+        viewModel.setDescription("A".repeat(251))
+
+        viewModel.submit { }
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.first()
+        assertTrue(state is CreateUiState.Error)
+        assertEquals("Description must not exceed 250 characters", (state as CreateUiState.Error).message)
     }
 }

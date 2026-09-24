@@ -45,6 +45,7 @@ data class UserResponseDto(
 @Serializable
 data class CreatePaletteRequestDto(
     val name: String,
+    val description: String? = null,
     val colors: List<String>,
     val tags: List<String> = emptyList(),
     val publish: Boolean = true
@@ -53,6 +54,7 @@ data class CreatePaletteRequestDto(
 @Serializable
 data class UpdatePaletteRequestDto(
     val name: String,
+    val description: String? = null,
     val colors: List<String>,
     val tags: List<String> = emptyList()
 )
@@ -61,6 +63,7 @@ data class UpdatePaletteRequestDto(
 data class PaletteResponseDto(
     val id: String,
     val name: String,
+    val description: String? = null,
     val status: String,
     val likeCount: Long,
     val colors: List<String>,

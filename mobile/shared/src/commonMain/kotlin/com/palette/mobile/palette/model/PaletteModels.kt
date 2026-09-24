@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class Palette(
     val id: String,
     val name: String,
+    val paletteDescription: String? = null,
     val status: String,
     val likeCount: Long,
     val colors: List<String>,

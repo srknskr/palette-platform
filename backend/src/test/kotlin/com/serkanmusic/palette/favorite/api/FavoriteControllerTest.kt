@@ -81,6 +81,7 @@ class FavoriteControllerTest {
                 PaletteResponse(
                     id = UUID.randomUUID(),
                     name = "Favorited",
+                    description = null,
                     status = "PUBLISHED",
                     likeCount = 1,
                     colors = listOf("#111111", "#222222", "#333333", "#444444"),

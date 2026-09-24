@@ -99,12 +99,13 @@ class PaletteRepository(
 
     suspend fun createPalette(
         name: String,
+        description: String? = null,
         colors: List<String>,
         tags: List<String>,
         publish: Boolean = true
     ): AppResult<Palette> {
         val result = networkClient.createPalette(
-            CreatePaletteRequestDto(name = name, colors = colors, tags = tags, publish = publish)
+            CreatePaletteRequestDto(name = name, description = description, colors = colors, tags = tags, publish = publish)
         ).map { it.toDomain() }
 
         if (result is AppResult.Success) {
@@ -118,12 +119,13 @@ class PaletteRepository(
     suspend fun updatePalette(
         id: String,
         name: String,
+        description: String? = null,
         colors: List<String>,
         tags: List<String>
     ): AppResult<Palette> {
         val result = networkClient.updatePalette(
             id = id,
-            request = UpdatePaletteRequestDto(name = name, colors = colors, tags = tags)
+            request = UpdatePaletteRequestDto(name = name, description = description, colors = colors, tags = tags)
         ).map { it.toDomain() }
 
         if (result is AppResult.Success) {

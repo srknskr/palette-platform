@@ -75,6 +75,7 @@ class DiscoverViewModel: ObservableObject {
                     palettes[index] = current.doCopy(
                         id: current.id,
                         name: current.name,
+                        paletteDescription: current.paletteDescription,
                         status: current.status,
                         likeCount: newCount,
                         colors: current.colors,
