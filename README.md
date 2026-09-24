@@ -1,26 +1,27 @@
 # Palette Platform
 
-Palette Platform is a color-palette discovery and collection platform backend. It provides a production-grade REST API built with Kotlin and Spring Boot, designed to serve web and mobile clients independently.
+Palette Platform is an end-to-end, multi-platform color discovery and collection platform. It provides a production-grade REST API built with Kotlin and Spring Boot, a modern responsive web client with Vue 3 and TypeScript, and native mobile apps powered by **Kotlin Multiplatform (KMP)** sharing networking, business logic, and offline caching across Android (Jetpack Compose) and iOS (SwiftUI).
 
 ## Architecture & Features
 
-The backend is built as a modular monolith:
+The platform is designed around a clean modular monolith backend and client apps:
 - `identity`: User registration, authentication, JWT access tokens, opaque refresh tokens with rotation and SHA-256 database hashing, logout, and current user retrieval.
 - `palette`: Palette creation, editing, deletion, detail lookup, random palette discovery, and feed listing (newest, popular, tag filtering, name search, hex color filtering, pagination).
 - `favorite`: Idempotent palette favoriting/unfavoriting, personal collections, atomic count updates preventing negative likes.
 - `moderation`: Admin review queue (pending palettes), publish, reject, archive operations with an audit trail (`moderation_logs`).
+- `mobile (KMP)`: Shared Kotlin Multiplatform core (`mobile/shared/`) powering both native Android (Jetpack Compose) and native iOS (SwiftUI) applications with zero business logic duplication.
+- `web`: Responsive Vue 3 + TypeScript SPA mirroring mobile design specifications with dark/light themes.
 - `shared`: RFC 9457 ProblemDetail error handling, rate limiting filter, OpenAPI / Swagger documentation, Actuator health and metrics probes.
 
 ## Technology Stack
 
-- Language: Kotlin 2.0.21 on Java 17+
-- Framework: Spring Boot 3.4.3
-- Data & Persistence: Spring Data JPA, Hibernate, PostgreSQL, Flyway
-- Security: Spring Security, JJWT, BCrypt
-- Documentation: SpringDoc OpenAPI 3 / Swagger UI
-- Testing: JUnit 5, MockK, MockMvc, Testcontainers PostgreSQL
-- Quality: Detekt static analysis
-- Containers: Docker, Docker Compose
+- **Backend**: Kotlin 2.0.21 on Java 17+, Spring Boot 3.4.3, Spring Data JPA, Hibernate, PostgreSQL, Flyway, Spring Security, JJWT
+- **Mobile (KMP)**: **Kotlin Multiplatform (KMP)**, Ktor Client, Kotlinx Coroutines, Kotlinx Serialization, Android Jetpack Compose, iOS SwiftUI
+- **Web**: Vue 3 (Composition API), TypeScript, Vite, Pinia, Vue Router
+- **Documentation**: SpringDoc OpenAPI 3 / Swagger UI
+- **Testing**: JUnit 5, MockK, MockMvc, Testcontainers PostgreSQL, Vitest, Playwright, XCTest
+- **Quality**: Detekt static analysis, ESLint, Prettier
+- **Containers & CI/CD**: Docker, Docker Compose, GitHub Actions, GitHub Container Registry (GHCR)
 
 ## Repository Layout
 
@@ -28,9 +29,12 @@ The backend is built as a modular monolith:
 palette-platform/
 ├── backend/                 Kotlin + Spring Boot REST API
 ├── web/                     Vue.js 3 + TypeScript Client (Vite, Pinia)
-├── mobile/                  KMP, Android Compose, SwiftUI
+├── mobile/                  Mobile clients & Kotlin Multiplatform (KMP)
+│   ├── shared/              Shared KMP Core (Ktor, domain models, use cases, offline cache)
+│   ├── androidApp/          Android native client (Jetpack Compose, Material 3)
+│   └── iosApp/              iOS native client (SwiftUI)
 ├── infrastructure/          Docker and deployment configuration
-├── docs/                    Product and engineering documentation
+├── docs/                    Product, mobile, and engineering documentation
 └── .github/workflows/       Path-scoped CI and Release pipelines
 ```
 
