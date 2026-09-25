@@ -122,6 +122,15 @@ fun CreatePaletteScreen(
             onValueChange = { viewModel.setDescription(it) },
             label = { Text("Description (Optional)") },
             placeholder = { Text("e.g. A serene winter morning color scheme") },
+            supportingText = {
+                Text(
+                    text = "${description.length}/250",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = androidx.compose.ui.text.style.TextAlign.End,
+                    color = if (description.length > 250) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            isError = description.length > 250,
             modifier = Modifier.fillMaxWidth(),
             maxLines = 3,
             shape = RoundedCornerShape(12.dp)

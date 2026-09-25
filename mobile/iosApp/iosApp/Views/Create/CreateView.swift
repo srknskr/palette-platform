@@ -42,9 +42,15 @@ struct CreateView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Description (Optional)")
-                        .font(.headline)
-                        .foregroundColor(.warmTextPrimary)
+                    HStack {
+                        Text("Description (Optional)")
+                            .font(.headline)
+                            .foregroundColor(.warmTextPrimary)
+                        Spacer()
+                        Text("\(viewModel.descriptionText.count)/250")
+                            .font(.caption)
+                            .foregroundColor(viewModel.descriptionText.count > 250 ? .red : .warmTextSecondary)
+                    }
 
                     TextField("e.g. A serene winter morning color scheme", text: $viewModel.descriptionText)
                         .padding(12)

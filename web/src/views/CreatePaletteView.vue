@@ -166,13 +166,18 @@ const handleSubmit = async () => {
 
           <!-- Palette Description -->
           <div class="form-group">
-            <label for="palette-desc">Description (optional)</label>
+            <div class="label-with-counter">
+              <label for="palette-desc">Description (optional)</label>
+              <span :class="['char-counter', { 'char-counter-danger': description.length > 250 }]">
+                {{ description.length }}/250
+              </span>
+            </div>
             <textarea
               id="palette-desc"
               v-model="description"
               rows="3"
               placeholder="Describe the mood, inspiration, or intended use cases..."
-              maxlength="500"
+              maxlength="250"
             ></textarea>
           </div>
 
@@ -326,6 +331,22 @@ const handleSubmit = async () => {
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-primary);
+}
+
+.label-with-counter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.char-counter {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.char-counter-danger {
+  color: var(--danger-color);
+  font-weight: 600;
 }
 
 .required {
