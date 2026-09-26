@@ -96,6 +96,17 @@ fun PaletteCard(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
+                    if (!palette.paletteDescription.isNullOrBlank()) {
+                        Text(
+                            text = palette.paletteDescription!!,
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontSize = 12.sp
+                            ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                     Text(
                         text = "${palette.likeCount} likes",
                         style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray, fontSize = 11.sp)
