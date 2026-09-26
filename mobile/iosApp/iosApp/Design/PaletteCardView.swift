@@ -27,6 +27,13 @@ struct PaletteCardView: View {
                             .foregroundColor(.warmTextPrimary)
                             .lineLimit(1)
 
+                        if let desc = palette.paletteDescription, !desc.trimmingCharacters(in: .whitespaces).isEmpty {
+                            Text(desc)
+                                .font(.caption2)
+                                .foregroundColor(.warmTextSecondary)
+                                .lineLimit(1)
+                        }
+
                         Text("\(palette.likeCount) likes")
                             .font(.caption2)
                             .foregroundColor(.warmTextSecondary)
