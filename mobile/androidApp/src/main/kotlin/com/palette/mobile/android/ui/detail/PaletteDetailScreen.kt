@@ -59,7 +59,9 @@ import com.palette.mobile.android.ui.components.LoadingState
 import com.palette.mobile.android.ui.components.parseHexColor
 
 import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
@@ -69,6 +71,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.foundation.horizontalScroll
 import com.palette.mobile.core.util.ExportFormat
 import com.palette.mobile.core.util.PaletteExporter
+import com.palette.mobile.core.util.ColorContrastCalculator
+import com.palette.mobile.core.util.WcagLevel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -80,6 +84,7 @@ fun PaletteDetailScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     var showExportSheet by remember { mutableStateOf(false) }
+    var showContrastSheet by remember { mutableStateOf(false) }
     var selectedExportFormat by remember { mutableStateOf(ExportFormat.CSS) }
 
     Scaffold(
@@ -94,6 +99,9 @@ fun PaletteDetailScreen(
                 actions = {
                     val currentSuccess = uiState as? DetailUiState.Success
                     if (currentSuccess != null) {
+                        IconButton(onClick = { showContrastSheet = true }) {
+                            Icon(Icons.Default.Visibility, contentDescription = "Accessibility & Contrast")
+                        }
                         IconButton(onClick = { showExportSheet = true }) {
                             Icon(Icons.Default.Code, contentDescription = "Export code")
                         }
@@ -244,13 +252,26 @@ fun PaletteDetailScreen(
                         }
 
                         Spacer(modifier = Modifier.height(24.dp))
-                        Button(
-                            onClick = { showExportSheet = true },
-                            modifier = Modifier.fillMaxWidth()
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            Icon(Icons.Default.Code, contentDescription = null, modifier = Modifier.size(18.dp))
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text("Export Palette Code")
+                            OutlinedButton(
+                                onClick = { showContrastSheet = true },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Icon(Icons.Default.Visibility, contentDescription = null, modifier = Modifier.size(18.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("Contrast")
+                            }
+                            Button(
+                                onClick = { showExportSheet = true },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Icon(Icons.Default.Code, contentDescription = null, modifier = Modifier.size(18.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("Export Code")
+                            }
                         }
                     }
 
@@ -327,6 +348,106 @@ fun PaletteDetailScreen(
                                             .fillMaxWidth()
                                             .padding(16.dp)
                                     )
+                                }
+                            }
+                        }
+                    }
+
+                    if (showContrastSheet) {
+                        ModalBottomSheet(
+                            onDismissRequest = { showContrastSheet = false }
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 20.dp)
+                                    .padding(bottom = 32.dp)
+                                    .verticalScroll(rememberScrollState())
+                            ) {
+                                Text(
+                                    text = "Accessibility & Contrast (WCAG 2.1)",
+                                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                                )
+                                Spacer(modifier = Modifier.height(6.dp))
+                                Text(
+                                    text = "Contrast ratios against white & dark text and between palette color pairs.",
+                                    style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                )
+
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                palette.colors.forEachIndexed { index, hex ->
+                                    val (againstWhite, againstDark) = ColorContrastCalculator.evaluateTextContrastAgainst(hex)
+                                    val bgCol = parseHexColor(hex)
+
+                                    Card(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 6.dp),
+                                        shape = RoundedCornerShape(12.dp),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                                        )
+                                    ) {
+                                        Column {
+                                            Box(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .height(48.dp)
+                                                    .background(bgCol),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                                                    horizontalArrangement = Arrangement.SpaceBetween
+                                                ) {
+                                                    Text("White Text", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                                                    Text("Dark Text", color = Color(0xFF111827), fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                                                }
+                                            }
+
+                                            Column(modifier = Modifier.padding(12.dp)) {
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Text("Color ${index + 1}", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyLarge)
+                                                    Text(hex, fontFamily = FontFamily.Monospace, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                                }
+
+                                                Spacer(modifier = Modifier.height(8.dp))
+
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceBetween
+                                                ) {
+                                                    Text("On White: ${againstWhite.ratio}:1", fontSize = 13.sp)
+                                                    Text(
+                                                        text = againstWhite.levelNormalText.label,
+                                                        color = if (againstWhite.passesNormalAA) Color(0xFF16A34A) else Color(0xFFDC2626),
+                                                        fontWeight = FontWeight.Bold,
+                                                        fontSize = 13.sp
+                                                    )
+                                                }
+
+                                                Spacer(modifier = Modifier.height(4.dp))
+
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceBetween
+                                                ) {
+                                                    Text("On Dark: ${againstDark.ratio}:1", fontSize = 13.sp)
+                                                    Text(
+                                                        text = againstDark.levelNormalText.label,
+                                                        color = if (againstDark.passesNormalAA) Color(0xFF16A34A) else Color(0xFFDC2626),
+                                                        fontWeight = FontWeight.Bold,
+                                                        fontSize = 13.sp
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }

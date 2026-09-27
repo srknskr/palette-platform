@@ -8,6 +8,7 @@ struct DetailView: View {
     @State private var copiedHex: String? = nil
 
     @State private var showingExportSheet = false
+    @State private var showingContrastSheet = false
     @State private var selectedExportFormat: ExportFormat = .css
     @State private var copiedExportMessage: String? = nil
 
@@ -87,14 +88,26 @@ struct DetailView: View {
                     }
                 }
 
-                Button(action: { showingExportSheet = true }) {
-                    Label("Export Palette Code", systemImage: "curlybraces")
-                        .fontWeight(.semibold)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.warmTextPrimary)
-                        .foregroundColor(Color.warmSurface)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                HStack(spacing: 12) {
+                    Button(action: { showingContrastSheet = true }) {
+                        Label("Contrast", systemImage: "eye")
+                            .fontWeight(.semibold)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.warmSurface)
+                            .foregroundColor(.warmTextPrimary)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+
+                    Button(action: { showingExportSheet = true }) {
+                        Label("Export", systemImage: "curlybraces")
+                            .fontWeight(.semibold)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.warmTextPrimary)
+                            .foregroundColor(Color.warmSurface)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
                 }
 
                 ShareLink(
@@ -164,6 +177,89 @@ struct DetailView: View {
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Done") { showingExportSheet = false }
+                    }
+                }
+            }
+            .presentationDetents([.medium, .large])
+        }
+        .sheet(isPresented: $showingContrastSheet) {
+            NavigationStack {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("WCAG 2.1 Contrast & Accessibility")
+                            .font(.headline)
+                            .foregroundColor(.warmTextPrimary)
+
+                        Text("Contrast ratio scores for normal text against white and dark backgrounds.")
+                            .font(.subheadline)
+                            .foregroundColor(.warmTextSecondary)
+
+                        ForEach(Array(palette.colors.enumerated()), id: \.offset) { index, hex in
+                            let pair = ColorContrastCalculator.shared.evaluateTextContrastAgainst(backgroundColorHex: hex)
+                            let againstWhite = pair.first!
+                            let againstDark = pair.second!
+
+                            VStack(spacing: 0) {
+                                HStack {
+                                    Text("White Text")
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.white)
+                                    Spacer()
+                                    Text("Dark Text")
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color(hex: "111827"))
+                                }
+                                .padding(.horizontal, 16)
+                                .frame(height: 50)
+                                .background(Color(hex: hex))
+
+                                VStack(spacing: 8) {
+                                    HStack {
+                                        Text("Color \(index + 1)")
+                                            .fontWeight(.bold)
+                                        Spacer()
+                                        Text(hex)
+                                            .font(.system(.caption, design: .monospaced))
+                                            .foregroundColor(.warmTextSecondary)
+                                    }
+
+                                    HStack {
+                                        Text("On White: \(String(format: "%.2f", againstWhite.ratio)):1")
+                                            .font(.caption)
+                                        Spacer()
+                                        Text(againstWhite.levelNormalText.label)
+                                            .font(.caption)
+                                            .fontWeight(.bold)
+                                            .foregroundColor(againstWhite.passesNormalAA ? .green : .red)
+                                    }
+
+                                    HStack {
+                                        Text("On Dark: \(String(format: "%.2f", againstDark.ratio)):1")
+                                            .font(.caption)
+                                        Spacer()
+                                        Text(againstDark.levelNormalText.label)
+                                            .font(.caption)
+                                            .fontWeight(.bold)
+                                            .foregroundColor(againstDark.passesNormalAA ? .green : .red)
+                                    }
+                                }
+                                .padding(12)
+                                .background(Color.warmSurface)
+                            }
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 2)
+                        }
+                    }
+                    .padding(20)
+                }
+                .background(Color.warmBackground)
+                .navigationTitle("Accessibility")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Done") { showingContrastSheet = false }
                     }
                 }
             }

@@ -9,9 +9,10 @@ import { useToastStore } from '@/stores/toast'
 import ColorSwatch from '@/components/ColorSwatch.vue'
 import LoadingSkeleton from '@/components/LoadingSkeleton.vue'
 import ErrorState from '@/components/ErrorState.vue'
-import { ArrowLeft, Heart, Share2, Trash2, Tag, Calendar, User as UserIcon, Code2, Copy, Check } from 'lucide-vue-next'
+import { ArrowLeft, Heart, Share2, Trash2, Tag, Calendar, User as UserIcon, Code2, Copy, Check, Eye } from 'lucide-vue-next'
 import { shareUrl, copyToClipboard } from '@/utils/clipboard'
 import { EXPORT_FORMATS, exportPalette, type ExportFormat } from '@/utils/paletteExporter'
+import { evaluateTextContrastAgainst, evaluateContrast, type ContrastResult } from '@/utils/colorContrast'
 
 const route = useRoute()
 const router = useRouter()
@@ -149,6 +150,44 @@ const scrollToExport = () => {
   }
 }
 
+const scrollToContrast = () => {
+  const contrastSection = document.getElementById('contrast-section')
+  if (contrastSection) {
+    contrastSection.scrollIntoView({ behavior: 'smooth' })
+  }
+}
+
+const colorContrastEvaluations = computed(() => {
+  if (!palette.value) return []
+  return palette.value.colors.map((color, idx) => {
+    const { againstWhite, againstDark } = evaluateTextContrastAgainst(color)
+    return {
+      index: idx + 1,
+      color,
+      againstWhite,
+      againstDark
+    }
+  })
+})
+
+const pairCombinations = computed(() => {
+  if (!palette.value || palette.value.colors.length < 2) return []
+  const list: { bgIndex: number; fgIndex: number; bg: string; fg: string; result: ContrastResult }[] = []
+  const colors = palette.value.colors
+  for (let i = 0; i < colors.length; i++) {
+    for (let j = i + 1; j < colors.length; j++) {
+      list.push({
+        bgIndex: i + 1,
+        fgIndex: j + 1,
+        bg: colors[i],
+        fg: colors[j],
+        result: evaluateContrast(colors[j], colors[i])
+      })
+    }
+  }
+  return list
+})
+
 onMounted(() => {
   fetchPalette()
 })
@@ -222,6 +261,11 @@ onMounted(() => {
                 <span>Export Code</span>
               </button>
 
+              <button class="btn btn-secondary" @click="scrollToContrast">
+                <Eye :size="18" />
+                <span>Accessibility</span>
+              </button>
+
               <button
                 v-if="isOwner"
                 class="btn btn-danger delete-btn"
@@ -251,6 +295,84 @@ onMounted(() => {
                 <Tag :size="12" />
                 {{ tag }}
               </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contrast / Accessibility Card -->
+      <div id="contrast-section" class="card contrast-card">
+        <div class="contrast-header">
+          <div>
+            <h3 class="title-md">Contrast &amp; Accessibility (WCAG 2.1)</h3>
+            <p class="subtitle">Contrast ratios for readability against text and between palette color combinations:</p>
+          </div>
+        </div>
+
+        <div class="contrast-grid">
+          <!-- Text contrast for each color -->
+          <div
+            v-for="item in colorContrastEvaluations"
+            :key="item.color"
+            class="contrast-item-card"
+          >
+            <div class="color-preview-banner" :style="{ backgroundColor: item.color }">
+              <span class="preview-white" style="color: #FFFFFF;">White text</span>
+              <span class="preview-dark" style="color: #111827;">Dark text</span>
+            </div>
+            <div class="contrast-item-content">
+              <div class="color-title-row">
+                <span class="color-label">Color {{ item.index }}</span>
+                <code class="hex-badge">{{ item.color }}</code>
+              </div>
+
+              <!-- White text score -->
+              <div class="contrast-score-row">
+                <span class="text-type">On White:</span>
+                <span class="score-ratio">{{ item.againstWhite.ratio }}:1</span>
+                <span
+                  class="badge-pill"
+                  :class="item.againstWhite.passesNormalAA ? 'badge-pass' : 'badge-fail'"
+                >
+                  {{ item.againstWhite.levelNormalText }}
+                </span>
+              </div>
+
+              <!-- Dark text score -->
+              <div class="contrast-score-row">
+                <span class="text-type">On Dark:</span>
+                <span class="score-ratio">{{ item.againstDark.ratio }}:1</span>
+                <span
+                  class="badge-pill"
+                  :class="item.againstDark.passesNormalAA ? 'badge-pass' : 'badge-fail'"
+                >
+                  {{ item.againstDark.levelNormalText }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pair Combinations Table -->
+        <div v-if="pairCombinations.length > 0" class="pairs-section">
+          <h4 class="title-sm">Palette Color Pair Readability</h4>
+          <div class="pairs-grid">
+            <div
+              v-for="pair in pairCombinations"
+              :key="`${pair.bg}-${pair.fg}`"
+              class="pair-card"
+              :style="{ backgroundColor: pair.bg, color: pair.fg }"
+            >
+              <div class="pair-text-sample">
+                Aa
+              </div>
+              <div class="pair-meta">
+                <div class="pair-names">Color {{ pair.fgIndex }} on Color {{ pair.bgIndex }}</div>
+                <div class="pair-score">
+                  <span>{{ pair.result.ratio }}:1</span>
+                  <span class="pair-level-badge">{{ pair.result.levelNormalText }}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -461,5 +583,159 @@ onMounted(() => {
   overflow-x: auto;
   color: var(--text-primary);
   margin: 0;
+}
+
+/* Contrast / Accessibility styles */
+.contrast-card {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.contrast-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.contrast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.contrast-item-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--bg-surface);
+}
+
+.color-preview-banner {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.contrast-item-content {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.color-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-color-subtle);
+}
+
+.color-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.hex-badge {
+  font-size: 0.8rem;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color-subtle);
+}
+
+.contrast-score-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.text-type {
+  color: var(--text-secondary);
+}
+
+.score-ratio {
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+
+.badge-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+.badge-pass {
+  background-color: rgba(34, 197, 94, 0.15);
+  color: #16a34a;
+}
+
+.badge-fail {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+}
+
+.pairs-section {
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pairs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.pair-card {
+  padding: 12px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--border-color-subtle);
+}
+
+.pair-text-sample {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.pair-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pair-names {
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+.pair-score {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.pair-level-badge {
+  font-size: 0.7rem;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.15);
 }
 </style>
