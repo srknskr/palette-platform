@@ -58,6 +58,18 @@ import com.palette.mobile.android.ui.components.ErrorState
 import com.palette.mobile.android.ui.components.LoadingState
 import com.palette.mobile.android.ui.components.parseHexColor
 
+import androidx.compose.material.icons.filled.Code
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.SecondaryTabRow
+import androidx.compose.material3.Tab
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.foundation.horizontalScroll
+import com.palette.mobile.core.util.ExportFormat
+import com.palette.mobile.core.util.PaletteExporter
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun PaletteDetailScreen(
@@ -67,6 +79,8 @@ fun PaletteDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    var showExportSheet by remember { mutableStateOf(false) }
+    var selectedExportFormat by remember { mutableStateOf(ExportFormat.CSS) }
 
     Scaffold(
         topBar = {
@@ -80,6 +94,9 @@ fun PaletteDetailScreen(
                 actions = {
                     val currentSuccess = uiState as? DetailUiState.Success
                     if (currentSuccess != null) {
+                        IconButton(onClick = { showExportSheet = true }) {
+                            Icon(Icons.Default.Code, contentDescription = "Export code")
+                        }
                         IconButton(onClick = {
                             val sendIntent = Intent().apply {
                                 action = Intent.ACTION_SEND
@@ -221,6 +238,94 @@ fun PaletteDetailScreen(
                                     SuggestionChip(
                                         onClick = { },
                                         label = { Text("#$tag") }
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Button(
+                            onClick = { showExportSheet = true },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(Icons.Default.Code, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Export Palette Code")
+                        }
+                    }
+
+                    if (showExportSheet) {
+                        ModalBottomSheet(
+                            onDismissRequest = { showExportSheet = false }
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 20.dp)
+                                    .padding(bottom = 32.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = "Export Palette",
+                                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                                    )
+                                    Button(
+                                        onClick = {
+                                            val code = PaletteExporter.export(palette, selectedExportFormat)
+                                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                            val clip = ClipData.newPlainText("Palette Code", code)
+                                            clipboard.setPrimaryClip(clip)
+                                            Toast.makeText(context, "${selectedExportFormat.displayName} copied!", Toast.LENGTH_SHORT).show()
+                                        }
+                                    ) {
+                                        Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(16.dp))
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text("Copy")
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                val formats = ExportFormat.entries
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .horizontalScroll(rememberScrollState()),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    formats.forEach { format ->
+                                        val isSelected = selectedExportFormat == format
+                                        SuggestionChip(
+                                            onClick = { selectedExportFormat = format },
+                                            label = { Text(format.displayName) },
+                                            colors = androidx.compose.material3.SuggestionChipDefaults.suggestionChipColors(
+                                                containerColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface
+                                            )
+                                        )
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                val exportedCode = PaletteExporter.export(palette, selectedExportFormat)
+                                Card(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                    ),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    Text(
+                                        text = exportedCode,
+                                        fontFamily = FontFamily.Monospace,
+                                        fontSize = 12.sp,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp)
                                     )
                                 }
                             }

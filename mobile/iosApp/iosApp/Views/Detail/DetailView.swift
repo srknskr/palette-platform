@@ -7,6 +7,10 @@ struct DetailView: View {
 
     @State private var copiedHex: String? = nil
 
+    @State private var showingExportSheet = false
+    @State private var selectedExportFormat: ExportFormat = .css
+    @State private var copiedExportMessage: String? = nil
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
@@ -83,6 +87,16 @@ struct DetailView: View {
                     }
                 }
 
+                Button(action: { showingExportSheet = true }) {
+                    Label("Export Palette Code", systemImage: "curlybraces")
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.warmTextPrimary)
+                        .foregroundColor(Color.warmSurface)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+
                 ShareLink(
                     item: "Colors: " + palette.colors.joined(separator: ", ")
                 ) {
@@ -98,6 +112,62 @@ struct DetailView: View {
         }
         .background(Color.warmBackground)
         .navigationTitle("Details")
-        .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $showingExportSheet) {
+            NavigationStack {
+                VStack(alignment: .leading, spacing: 16) {
+                    Picker("Format", selection: $selectedExportFormat) {
+                        Text("CSS").tag(ExportFormat.css)
+                        Text("Tailwind").tag(ExportFormat.tailwind)
+                        Text("Compose").tag(ExportFormat.compose)
+                        Text("SwiftUI").tag(ExportFormat.swiftUi)
+                        Text("JSON").tag(ExportFormat.json)
+                    }
+                    .pickerStyle(.segmented)
+
+                    let code = PaletteExporter.shared.export(palette: palette, format: selectedExportFormat)
+
+                    ScrollView {
+                        Text(code)
+                            .font(.system(.subheadline, design: .monospaced))
+                            .padding(16)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color.warmSurface)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+
+                    if let msg = copiedExportMessage {
+                        Text(msg)
+                            .font(.caption)
+                            .foregroundColor(.green)
+                    }
+
+                    Button(action: {
+                        UIPasteboard.general.string = code
+                        copiedExportMessage = "\(selectedExportFormat.displayName) copied to clipboard!"
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            copiedExportMessage = nil
+                        }
+                    }) {
+                        Label("Copy to Clipboard", systemImage: "doc.on.doc")
+                            .fontWeight(.semibold)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.warmTextPrimary)
+                            .foregroundColor(Color.warmSurface)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                }
+                .padding(20)
+                .background(Color.warmBackground)
+                .navigationTitle("Export Palette")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Done") { showingExportSheet = false }
+                    }
+                }
+            }
+            .presentationDetents([.medium, .large])
+        }
     }
 }

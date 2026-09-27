@@ -9,8 +9,9 @@ import { useToastStore } from '@/stores/toast'
 import ColorSwatch from '@/components/ColorSwatch.vue'
 import LoadingSkeleton from '@/components/LoadingSkeleton.vue'
 import ErrorState from '@/components/ErrorState.vue'
-import { ArrowLeft, Heart, Share2, Trash2, Tag, Calendar, User as UserIcon } from 'lucide-vue-next'
-import { shareUrl } from '@/utils/clipboard'
+import { ArrowLeft, Heart, Share2, Trash2, Tag, Calendar, User as UserIcon, Code2, Copy, Check } from 'lucide-vue-next'
+import { shareUrl, copyToClipboard } from '@/utils/clipboard'
+import { EXPORT_FORMATS, exportPalette, type ExportFormat } from '@/utils/paletteExporter'
 
 const route = useRoute()
 const router = useRouter()
@@ -24,6 +25,8 @@ const isLiked = ref(false)
 const likesCount = ref(0)
 const isTogglingLike = ref(false)
 const isDeleting = ref(false)
+const selectedFormat = ref<ExportFormat>('css')
+const isCodeCopied = ref(false)
 
 const paletteId = computed(() => route.params.id as string)
 
@@ -115,6 +118,37 @@ const handleDelete = async () => {
   }
 }
 
+const exportedCode = computed(() => {
+  if (!palette.value) return ''
+  return exportPalette(
+    {
+      name: palette.value.name,
+      colors: palette.value.colors,
+      description: palette.value.description
+    },
+    selectedFormat.value
+  )
+})
+
+const copyExportCode = async () => {
+  if (!exportedCode.value) return
+  const success = await copyToClipboard(exportedCode.value)
+  if (success) {
+    isCodeCopied.value = true
+    toastStore.addToast(`Copied ${selectedFormat.value.toUpperCase()} code!`, 'success')
+    setTimeout(() => {
+      isCodeCopied.value = false
+    }, 2000)
+  }
+}
+
+const scrollToExport = () => {
+  const exportSection = document.getElementById('export-section')
+  if (exportSection) {
+    exportSection.scrollIntoView({ behavior: 'smooth' })
+  }
+}
+
 onMounted(() => {
   fetchPalette()
 })
@@ -183,6 +217,11 @@ onMounted(() => {
                 <span>Share</span>
               </button>
 
+              <button class="btn btn-secondary" @click="scrollToExport">
+                <Code2 :size="18" />
+                <span>Export Code</span>
+              </button>
+
               <button
                 v-if="isOwner"
                 class="btn btn-danger delete-btn"
@@ -217,16 +256,34 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- Quick Export / CSS Code Snippet -->
-      <div class="card export-card">
-        <h3 class="title-md">CSS Variables Export</h3>
-        <p class="subtitle">Easily drop this color palette into your stylesheet:</p>
-        <pre class="code-box"><code>:root {
-  --color-1: {{ palette.colors[0] }};
-  --color-2: {{ palette.colors[1] }};
-  --color-3: {{ palette.colors[2] }};
-  --color-4: {{ palette.colors[3] }};
-}</code></pre>
+      <!-- Multi-format Export Card -->
+      <div id="export-section" class="card export-card">
+        <div class="export-header">
+          <div>
+            <h3 class="title-md">Export Palette Code</h3>
+            <p class="subtitle">Drop this palette directly into your web, Android, iOS, or backend project:</p>
+          </div>
+          <button class="btn btn-secondary copy-btn" @click="copyExportCode">
+            <component :is="isCodeCopied ? Check : Copy" :size="16" />
+            <span>{{ isCodeCopied ? 'Copied!' : 'Copy Code' }}</span>
+          </button>
+        </div>
+
+        <div class="format-tabs">
+          <button
+            v-for="format in EXPORT_FORMATS"
+            :key="format.id"
+            class="tab-btn"
+            :class="{ active: selectedFormat === format.id }"
+            @click="selectedFormat = format.id"
+          >
+            {{ format.name }}
+          </button>
+        </div>
+
+        <div class="code-container">
+          <pre class="code-box"><code>{{ exportedCode }}</code></pre>
+        </div>
       </div>
     </div>
   </div>
@@ -334,17 +391,75 @@ onMounted(() => {
   padding: 24px;
   display: flex;
   flex-direction: column;
+  gap: 16px;
+}
+
+.export-header {
+  display: flex;
+  flex-direction: column;
   gap: 12px;
+  justify-content: space-between;
+}
+
+@media (min-width: 640px) {
+  .export-header {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+}
+
+.format-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+}
+
+.tab-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  background-color: var(--bg-surface-hover);
+  color: var(--text-primary);
+}
+
+.tab-btn.active {
+  background-color: var(--primary-color, #2563eb);
+  color: #ffffff;
+  border-color: var(--primary-color, #2563eb);
+}
+
+.code-container {
+  position: relative;
 }
 
 .code-box {
   background-color: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 16px;
+  padding: 18px;
   font-family: var(--font-mono);
   font-size: 0.9rem;
+  line-height: 1.5;
   overflow-x: auto;
   color: var(--text-primary);
+  margin: 0;
 }
 </style>
